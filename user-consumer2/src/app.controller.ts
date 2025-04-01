@@ -30,7 +30,6 @@ export class AppController {
        }
       const createdCat = new this.UserModel(newUser);
       return createdCat.save()
-      // Process the user data (e.g., save to database)
     } catch (error) {
       console.error('Error processing user creation event:', error);
     }
@@ -38,7 +37,7 @@ export class AppController {
 
 
 
-  @MessagePattern('users.fetch') // Listens for 'users.fetch' request
+  @MessagePattern('users.fetch') 
   async handleUserFetch(@Payload() query) {
     try {
       console.log("hero pattern")
@@ -50,7 +49,6 @@ export class AppController {
       if (name) filter.name = { $regex: name, $options: 'i' };
       if (email) filter.email = { $regex: email, $options: 'i' };
 
-      // Paginated query
       const users = await this.UserModel.find(filter)
         .skip((page - 1) * limit)
         .limit(parseInt(limit))
@@ -58,17 +56,9 @@ export class AppController {
 
       const total = await this.UserModel.countDocuments(filter);
       const totalPages = Math.ceil(total / limit);
-console.log(users);
-      // Return the response
-      return {
-        page,
-        limit,
-        total,
-        totalPages,
-        users,
-      };
+
+      return {page,limit,total,totalPages,users};
     } catch (error) {
-      console.error('Error fetching users:', error);
       return { error: 'Failed to fetch users' };
     }
   }
